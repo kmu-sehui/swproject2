@@ -1,0 +1,52 @@
+int ledPin = 7;          
+int brightness = 0;      
+int fadeAmount = 1;      
+int pwmPeriod = 10000;   
+int pwmDuty = 0;         
+
+int testPeriod = 10000;   
+// int testPeriod = 1000; 
+// int testPeriod = 100;  
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop() {
+  set_period(testPeriod);
+  set_duty(brightness);
+
+  unsigned long stepDuration = 10000;
+  unsigned long startTime = micros();
+
+  while (micros() - startTime < stepDuration) {
+    int highTime = (pwmPeriod * pwmDuty) / 100;
+    int lowTime  = pwmPeriod - highTime;
+
+    if (highTime > 0) {
+      digitalWrite(ledPin, HIGH);
+      delayMicroseconds(highTime);
+    }
+    if (lowTime > 0) {
+      digitalWrite(ledPin, LOW);
+      delayMicroseconds(lowTime);
+    }
+  }
+
+  brightness += fadeAmount;
+  if (brightness <= 0 || brightness >= 100) {
+    fadeAmount = -fadeAmount;
+  }
+}
+
+void set_period(int period) {
+  if (period >= 100 && period <= 10000) {
+    pwmPeriod = period;
+  }
+}
+
+void set_duty(int duty) {
+  if (duty >= 0 && duty <= 100) {
+    pwmDuty = duty;
+  }
+}
